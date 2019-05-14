@@ -407,6 +407,17 @@ class CycleGAN():
             synthetic_images_B = synthetic_pool_B.query(synthetic_images_B)
 
             for _ in range(self.discriminator_iterations):
+
+                # don't run if we don't have enough in batch
+                if len(real_images_A) != len(ones):
+                    return
+                if len(real_images_B) != len(ones):
+                    return
+                if len(real_images_A) != len(zeros):
+                    return
+                if len(real_images_B) != len(zeros):
+                    return
+
                 DA_loss_real = self.D_A.train_on_batch(x=real_images_A, y=ones)
                 DB_loss_real = self.D_B.train_on_batch(x=real_images_B, y=ones)
                 DA_loss_synthetic = self.D_A.train_on_batch(x=synthetic_images_A, y=zeros)
