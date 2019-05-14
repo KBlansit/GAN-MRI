@@ -8,7 +8,10 @@ from keras.backend import mean
 from keras.models import Model, model_from_json
 from keras.utils import plot_model
 
-from keras.engine.network import Network as Container
+try:
+    from keras.engine.topology import Container
+except:
+    from keras.engine.network import Network as Container
 
 from collections import OrderedDict
 from scipy.misc import imsave, toimage  # has depricated
@@ -29,6 +32,9 @@ import load_data
 
 np.random.seed(seed=12345)
 
+CUDA_DEVICE = "1"
+os.environ["CUDA_VISIBLE_DEVICES"]=CUDA_DEVICE
+
 
 class CycleGAN():
     def __init__(self, lr_D=2e-4, lr_G=2e-4, image_shape=(128, 128, 1),
@@ -46,7 +52,7 @@ class CycleGAN():
         self.discriminator_iterations = 1  # Number of generator training iterations in each training loop
         self.beta_1 = 0.5
         self.beta_2 = 0.999
-        self.batch_size = 1
+        self.batch_size = 32
         self.epochs = 200  # choose multiples of 25 since the models are save each 25th epoch
         self.save_interval = 1
         self.synthetic_pool_size = 50
